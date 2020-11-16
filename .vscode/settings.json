@@ -1,0 +1,4 @@
+{
+  "graphql-config.load.rootDir": ".cache",
+  "javascript.implicitProjectConfig.checkJs": false
+}
