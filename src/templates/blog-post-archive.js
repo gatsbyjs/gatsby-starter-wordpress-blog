@@ -83,6 +83,13 @@ export const pageQuery = graphql`
         date(formatString: "MMMM DD, YYYY")
         title
         excerpt
+        featuredImage {
+          node {
+            children {
+              id
+            }
+          }
+        }
       }
     }
   }
