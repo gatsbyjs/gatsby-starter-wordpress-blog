@@ -68,6 +68,10 @@ module.exports = {
       },
     },
 
+    // This makes our Gutenberg CSS work
+    // See https://www.gatsbyjs.com/plugins/gatsby-plugin-postcss/ for more info
+    `gatsby-plugin-postcss`,
+
     // See https://www.gatsbyjs.com/plugins/gatsby-plugin-react-helmet/?=gatsby-plugin-react-helmet
     `gatsby-plugin-react-helmet`,
 
