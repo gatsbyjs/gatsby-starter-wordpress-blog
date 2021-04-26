@@ -4,12 +4,16 @@ import Image from "gatsby-image"
 import parse from "html-react-parser"
 
 // We're using Gutenberg so we need the block styles
-import "@wordpress/block-library/build-style/style.css"
-import "@wordpress/block-library/build-style/theme.css"
+// these are copied into this project due to a conflict in the postCSS
+// version used by the Gatsby and @wordpress packages that causes build
+// failures.
+// @todo update this once @wordpress upgrades their postcss version
+import "../css/@wordpress/block-library/build-style/style.css"
+import "../css/@wordpress/block-library/build-style/theme.css"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
-import SEO from "../components/seo"
+import Seo from "../components/seo"
 
 const BlogPostTemplate = ({ data: { previous, next, post } }) => {
   const featuredImage = {
@@ -19,7 +23,7 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
 
   return (
     <Layout>
-      <SEO title={post.title} description={post.excerpt} />
+      <Seo title={post.title} description={post.excerpt} />
 
       <article
         className="blog-post"
