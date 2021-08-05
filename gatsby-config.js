@@ -8,7 +8,7 @@
 
 module.exports = {
   flags: {
-    PARALLEL_QUERY_RUNNING: true,
+    PARALLEL_QUERY_RUNNING: false,
   },
   /**
    * Adding plugins to this array adds them to your Gatsby site.
