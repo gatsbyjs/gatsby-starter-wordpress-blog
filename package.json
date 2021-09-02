@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "gatsby": "alpha-9689ff",
-    "gatsby-image": "^3.3.0",
+    "gatsby-plugin-image": "^2.0.0-alpha-9689ff.5",
     "gatsby-plugin-manifest": "alpha-9689ff",
     "gatsby-plugin-offline": "alpha-9689ff",
     "gatsby-plugin-react-helmet": "alpha-9689ff",
