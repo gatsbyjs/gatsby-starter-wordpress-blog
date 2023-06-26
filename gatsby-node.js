@@ -32,10 +32,9 @@ exports.createPages = async gatsbyUtilities => {
  */
 const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
   Promise.all(
-    posts.map(({ previous, post, next }) =>
-      // createPage is an action passed to createPages
-      // See https://www.gatsbyjs.com/docs/actions#createPage for more info
-      gatsbyUtilities.actions.createPage({
+    posts.map(async ({ previous, post, next }) =>{
+      const {post: postNow, previous: previousNow, next: nextNow} = await getIndividualPost({previous, post, next}, gatsbyUtilities)
+      const page = gatsbyUtilities.actions.createPage({
         // Use the WordPress uri as the Gatsby page path
         // This is a good idea so that internal links and menus work 👍
         path: post.uri,
@@ -45,17 +44,10 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
 
         // `context` is available in the template as a prop and
         // as a variable in GraphQL.
-        context: {
-          // we need to add the post id here
-          // so our blog post template knows which blog post
-          // the current page is (when you open it in a browser)
-          id: post.id,
-
-          // We also use the next and previous id's to query them and add links!
-          previousPostId: previous ? previous.id : null,
-          nextPostId: next ? next.id : null,
-        },
+        context: {post: postNow, previous: previousNow, next: nextNow},
       })
+      return page
+    }
     )
   )
 
@@ -161,6 +153,59 @@ async function getPosts({ graphql, reporter }) {
     )
     return
   }
-
   return graphqlResult.data.allWpPost.edges
+}
+
+/**
+ * This function queries Gatsby's GraphQL server and asks for
+ * the post needed. 
+ */
+async function getIndividualPost({ previous, post, next }, { graphql, reporter }) {
+  const {id} = post
+  const previousPostId = previous ? previous.id : null
+  const nextPostId = next ? next.id : null
+  const graphqlResult = await graphql(`
+    query BlogPostById(
+      $id: String! = "${id}"
+      $previousPostId: String = ${previousPostId ? '"'+previousPostId+'"': 'null'}
+      $nextPostId: String = ${nextPostId ? '"'+nextPostId+'"': 'null'}
+    ) {
+      post: wpPost(id: { eq: $id }) {
+        id
+        excerpt
+        content
+        title
+        date(formatString: "MMMM DD, YYYY")
+        featuredImage {
+          node {
+            altText
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  quality: 100
+                  placeholder: TRACED_SVG
+                  layout: FULL_WIDTH
+                )
+              }
+            }
+          }
+        }
+      }
+      previous: wpPost(id: { eq: $previousPostId }) {
+        uri
+        title
+      }
+      next: wpPost(id: { eq: $nextPostId }) {
+        uri
+        title
+      }
+    }
+  `)
+  if (graphqlResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your blog post`,
+      graphqlResult.errors
+    )
+  }
+  return graphqlResult.data
 }
